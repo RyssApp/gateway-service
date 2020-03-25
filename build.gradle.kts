@@ -15,7 +15,7 @@ group = "app.ryss"
 version = "0.0.1"
 
 application {
-    mainClassName = "io.ktor.server.netty.EngineMain"
+    mainClassName = "app.ryss.gateway.LauncherKt"
 }
 
 repositories {

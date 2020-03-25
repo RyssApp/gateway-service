@@ -23,6 +23,8 @@ import io.ktor.jackson.jackson
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
 import mu.KotlinLogging
 import java.time.Duration
@@ -32,12 +34,16 @@ private val requestLogger = KotlinLogging.logger("Requests")
 /**
  * Main class of gateway service.
  */
-class GatewayService(cfg: Config) {
+class GatewayService(private val cfg: Config) {
+
+    private val memoryMetrics: MemoryMetrics?
 
     init {
-        val influxDBClient = InfluxDBClientFactory.create(cfg.influxDbAddress, cfg.influxDbToken.toCharArray())
-        if (cfg.enableMetrics) {
+        memoryMetrics = if (cfg.enableMetrics) {
+            val influxDBClient = InfluxDBClientFactory.create(cfg.influxDbAddress, cfg.influxDbToken.toCharArray())
             MemoryMetrics(influxDBClient, cfg.influxDbBucket, cfg.influxDbOrg)
+        } else {
+            null
         }
     }
 
@@ -48,9 +54,16 @@ class GatewayService(cfg: Config) {
     private val graphQL = GraphQL(cfg.enableGraphiQL, this)
 
     /**
-     * Main KTor module.
+     * Starts the gateway service.
      */
-    fun mainModule(application: Application) {
+    suspend fun start() {
+        memoryMetrics?.start()
+
+        Runtime.getRuntime().addShutdownHook(Thread(::stop))
+        embeddedServer(Netty, module = ::mainModule, port = cfg.port).start(wait = true)
+    }
+
+    private fun mainModule(application: Application) {
         application.apply {
             install(Compression) {
                 gzip {
@@ -107,5 +120,9 @@ class GatewayService(cfg: Config) {
                 graphQL(this)
             }
         }
+    }
+
+    private fun stop() {
+        memoryMetrics?.stop()
     }
 }

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 /**
  * Gateway entry point.
  */
-fun main() {
+suspend fun main() {
     val cfg = Config()
     val debug = cfg.environment == Environment.DEVELOPMENT
     val logLevel = Level.valueOf(cfg.logLevel)
@@ -27,6 +27,5 @@ fun main() {
         Sentry.init()
     }
 
-    val application = GatewayService(cfg)
-    embeddedServer(Netty, module = application::mainModule, port = cfg.port).start(wait = true)
+    GatewayService(cfg).start()
 }

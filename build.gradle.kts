@@ -5,7 +5,7 @@ val ktorVersion: String = "1.3.2"
 
 plugins {
     application
-    kotlin("jvm") version "1.3.70"
+    kotlin("jvm") version "1.3.71"
 }
 
 group = "app.ryss"
@@ -51,4 +51,12 @@ dependencies {
 
     // Kotlin
     implementation(kotlin("stdlib-jdk8"))
+}
+
+tasks {
+    compileKotlin {
+        kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+        }
+    }
 }

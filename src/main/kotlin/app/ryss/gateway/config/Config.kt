@@ -1,7 +1,7 @@
 package app.ryss.gateway.config
 
-import io.github.cdimascio.dotenv.dotenv
 import ch.qos.logback.classic.Level
+import io.github.cdimascio.dotenv.dotenv
 
 /**
  * Configuration of gateway service.
@@ -15,7 +15,8 @@ class Config {
     /**
      * The [Environment] of the current instance.
      */
-    val environment: Environment = Environment.valueOf(dotenv["${PREFIX}ENVIRONMENT"] ?: Environment.PRODUCTION.toString())
+    val environment: Environment =
+        Environment.valueOf(dotenv["${PREFIX}ENVIRONMENT"] ?: Environment.PRODUCTION.toString())
 
     /**
      * The [Level] of the logger.

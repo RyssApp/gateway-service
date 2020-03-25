@@ -47,7 +47,7 @@ dependencies {
     implementation("io.sentry", "sentry-logback", "1.7.30")
 
     // Util
-    implementation("io.github.cdimascio", "java-dotenv" ,"5.1.3")
+    implementation("io.github.cdimascio", "java-dotenv", "5.1.3")
 
     // Kotlin
     implementation(kotlin("stdlib-jdk8"))

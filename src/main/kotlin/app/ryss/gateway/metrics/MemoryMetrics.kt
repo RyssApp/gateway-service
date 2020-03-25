@@ -36,6 +36,8 @@ class MemoryMetrics(private val client: InfluxDBClient, private val bucket: Stri
         for (unit in scheduler) {
             client.writeApi.writePoint(bucket, org, Point.measurement("memory").apply {
                 addTag("host", hostName)
+                addTag("java.version", System.getProperty("java.version"))
+                addTag("java.vm.name", System.getProperty("java.vm.name"))
                 addField("total", Runtime.getRuntime().totalMemory())
                 addField("allocated", Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())
                 time(Instant.now().toEpochMilli(), WritePrecision.MS)

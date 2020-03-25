@@ -5,8 +5,6 @@ import app.ryss.gateway.config.Environment
 import app.ryss.gateway.core.GatewayService
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import io.sentry.Sentry
 import org.slf4j.LoggerFactory
 

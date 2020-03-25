@@ -1,0 +1,23 @@
+name: Docker Build & Publish
+
+on:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build Image
+        env:
+          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u theleede -p $DOCKER_PASSWD votebot.registry.jetbrains.space
+          docker build -t ryss/gateway-service . -f Dockerfile
+          docker tag ryss/gateway-service ryss/gateway-service:latest
+          docker tag ryss/gateway-service ryss/gateway-service:${GITHUB_SHA::8}
+      - name: Push Image
+        if: github.ref == 'refs/heads/master'
+        run: docker push ryss/gateway-service   

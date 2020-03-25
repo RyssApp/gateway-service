@@ -1,10 +1,14 @@
 package app.ryss.gateway.core
 
+import app.ryss.gateway.config.Config
+import app.ryss.gateway.config.Environment
 import app.ryss.gateway.entites.RequestError
 import app.ryss.gateway.gql.GraphQL
+import app.ryss.gateway.metrics.MemoryMetrics
 import app.ryss.gateway.ratelimits.MemoryRateLimiter
 import app.ryss.gateway.ratelimits.RateLimiter
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.influxdb.client.InfluxDBClientFactory
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.call
@@ -27,16 +31,21 @@ private val requestLogger = KotlinLogging.logger("Requests")
 
 /**
  * Main class of gateway service.
- * @param enableGraphiQL whether graphiql should be enabled or not
- * @param debug whether debug mode is enabled or not
  */
-class GatewayService(enableGraphiQL: Boolean, debug: Boolean) {
+class GatewayService(cfg: Config) {
+
+    init {
+        val influxDBClient = InfluxDBClientFactory.create(cfg.influxDbAddress, cfg.influxDbToken.toCharArray())
+        if (cfg.enableMetrics) {
+            MemoryMetrics(influxDBClient, cfg.influxDbBucket, cfg.influxDbOrg)
+        }
+    }
 
     /**
      * Rate-limiter used for rate-limiting requests.
      */
-    val rateLimiter: RateLimiter = if (debug) MemoryRateLimiter() else null!!
-    private val graphQL = GraphQL(enableGraphiQL, this)
+    val rateLimiter: RateLimiter = if (cfg.environment == Environment.DEVELOPMENT) MemoryRateLimiter() else null!!
+    private val graphQL = GraphQL(cfg.enableGraphiQL, this)
 
     /**
      * Main KTor module.

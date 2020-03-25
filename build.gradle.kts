@@ -39,11 +39,15 @@ dependencies {
     implementation("ch.qos.logback", "logback-classic", "1.3.0-alpha5")
     implementation("io.github.microutils", "kotlin-logging", "1.7.9")
 
+    // Metrics
+    implementation("com.influxdb", "influxdb-client-java", "1.6.0")
+
     // Sentry
     implementation("io.sentry", "sentry", "1.7.30")
     implementation("io.sentry", "sentry-logback", "1.7.30")
 
-
+    // Util
+    implementation("io.github.cdimascio", "java-dotenv" ,"5.1.3")
 
     // Kotlin
     implementation(kotlin("stdlib-jdk8"))

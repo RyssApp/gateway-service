@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 /**
  * Ktor version.
  */
@@ -6,6 +8,7 @@ val ktorVersion: String = "1.3.2"
 plugins {
     application
     kotlin("jvm") version "1.3.71"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 group = "app.ryss"
@@ -58,5 +61,9 @@ tasks {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
         }
+    }
+
+    "shadowJar"(ShadowJar::class) {
+        archiveFileName.set("gateway-service.jar")
     }
 }
